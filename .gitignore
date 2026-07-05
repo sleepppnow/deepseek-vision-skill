@@ -1,0 +1,20 @@
+# DeepSeek Vision Bridge — 让 DeepSeek 拥有视觉能力
+
+# 敏感文件
+config/vision-config.json
+
+# Windows
+Thumbs.db
+*.lnk
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# 临时文件
+*.tmp
+*.log
+.claude/

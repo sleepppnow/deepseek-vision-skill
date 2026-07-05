@@ -1,0 +1,14 @@
+{
+    "_说明": "DeepSeek Vision Bridge —— 视觉模型配置",
+    "_用法": "复制此文件为 vision-config.json 并填入你的 API Key",
+    "_provider可选": "openai(推荐) / anthropic / google",
+    "_model参考_openai": "gpt-4o-mini(便宜推荐) / gpt-4o(最强)",
+    "_model参考_anthropic": "claude-haiku-4-5 / claude-sonnet-5",
+    "_model参考_google": "gemini-2.5-flash(有免费额度) / gemini-2.5-pro",
+
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "api_key": "sk-your-api-key-here",
+    "api_url": "",
+    "max_tokens": 1000
+}
