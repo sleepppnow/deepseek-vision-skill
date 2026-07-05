@@ -44,14 +44,14 @@ DeepSeek 基于描述回答用户（就像亲眼看到了图片）
 
 **Windows（PowerShell）：**
 ```powershell
-git clone https://github.com/YOUR_USERNAME/deepseek-vision-skill.git
+git clone https://github.com/sleepppnow/deepseek-vision-skill.git
 cd deepseek-vision-skill
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
 **macOS / Linux：**
 ```bash
-git clone https://github.com/YOUR_USERNAME/deepseek-vision-skill.git
+git clone https://github.com/sleepppnow/deepseek-vision-skill.git
 cd deepseek-vision-skill
 bash install.sh
 ```
