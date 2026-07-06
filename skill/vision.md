@@ -1,48 +1,65 @@
-# DeepSeek Vision Bridge Skill
+﻿# Vision — 图片自动识别
 
-当 DeepSeek 用户拖入图片时，自动调用第三方视觉模型 API 获取图片文字描述。
+## ⚠️ 最高优先级规则
 
-## 触发条件
+当用户的消息中出现以下任一内容时，你**必须**在处理任何其他事情之前，第一时间调用 vision 脚本：
 
-当看到以下模式时，**立即**处理图片，禁止说"我无法看到图片"：
+- `[Image: source: <路径>]`
+- `[Unsupported Image]`
+- `[Image #N]`（N 为数字）
 
-- `[Image: source: <文件路径>]`
-- `[Unsupported Image]` 配合 `[Image #N]` 占位符
-- 用户说"这张图""看图""识别""图片里有什么"
+**即使用户没有输入任何文字**（只拖入一张图），也必须执行。
 
-## 操作步骤
+## 执行步骤
 
-### 1. 提取图片路径
-从 `[Image: source: D:\path\to\image.png]` 中取路径。
+### 第一步：提取路径
+从 prompt 中的 `[Image: source: ...]` 提取完整文件路径。
 
-### 2. 调用 Vision 脚本
+### 第二步：识别每张图片
 ```powershell
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\scripts\vision.ps1" -ImagePath "提取到的路径"
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\scripts\vision.ps1" -ImagePath "路径"
 ```
 
-如果用户有具体问题（如"图片里的文字是什么？"），可传递自定义提示：
-```powershell
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\scripts\vision.ps1" -ImagePath "路径" -Prompt "用户的问题"
-```
+如果有多张图片，逐一处理。
 
-### 3. 处理返回结果
-- **成功返回文字描述** → 基于该描述直接回答用户，就像你亲眼看到了图片
-- **报错含 "Config file not found"** → 告诉用户配置文件缺失
-- **报错含 "API"** → 告诉用户检查 `~/.claude/scripts/vision-config.json` 中的 api_key
+### 第三步：结合上下文理解用户意图
+拿到图片描述后，结合：
+- 用户附带的文字（如果有）
+- 对话历史中的上下文
+- 图片本身的内容
 
-### 4. 回答风格
-- 直接基于图片描述回答，**不要**说"根据 vision 脚本的返回..."
-- 不要把脚本调用过程展示给用户
-- 图片中有文字就逐字引用
+判断用户拖入这张图是想要干什么，然后自然地回答。
 
-## 配置
-`~/.claude/scripts/vision-config.json`：
+### 第四步：回答
+基于图片描述直接回答，就像亲眼看到了图片。**绝对禁止**说：
+- "我无法看到图片"
+- "DeepSeek 不支持视觉"
+- "根据 vision 脚本..."
+
+---
+
+## 各种场景的处理
+
+| 用户输入 | 处理方式 |
+|---------|---------|
+| 只拖入图片，无文字 | 先识别，再根据上下文推测意图 |
+| 拖入图片 + "这是什么" | 识别后详述图片内容 |
+| 拖入图片 + 具体问题 | 识别后针对问题回答 |
+| 连续拖入多张图片 | 逐一识别，对比分析 |
+
+## 失败处理
+- 脚本报错 → 告知用户检查 `~/.claude/scripts/vision-config.json`
+- 图片不存在 → 告知路径无效
+- API 报错 → 告知检查 api_key 和 api_url
+
+## 配置文件
+`~/.claude/scripts/vision-config.json`
 ```json
 {
     "provider": "openai",
     "model": "gpt-4o-mini",
     "api_key": "sk-xxx",
-    "api_url": "https://your-proxy.com/v1/chat/completions",
+    "api_url": "",
     "max_tokens": 1000
 }
 ```
